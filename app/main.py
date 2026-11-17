@@ -16,6 +16,8 @@ from app.database.todo import Base, engine, get_db
 from app.router.todo import router as todo_router
 from app.models.todo import Todo
 
+from app.router.auth import router as auth_router
+
 # Tự động tạo các bảng trong Database nếu chưa có
 Base.metadata.create_all(bind=engine)
 
@@ -59,4 +61,6 @@ def get_todo_by_id(id: int, db: Session = Depends(get_db)):
     if todo:
         return todo
     return {"message": "Todo not found"}
- 
+
+
+app.include_router(auth_router)
