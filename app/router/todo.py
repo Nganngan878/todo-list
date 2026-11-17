@@ -51,3 +51,6 @@ def update_task_status(
     db: Session = Depends(get_db),
 ):
     return todo_service.update_task_status(db, task_id, payload.status)
+@router.delete("/{task_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_task(task_id: int, db: Session = Depends(get_db)):
+    todo_service.delete_task(db, task_id)
