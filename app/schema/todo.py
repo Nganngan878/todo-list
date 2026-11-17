@@ -43,3 +43,10 @@ class TaskCreate(BaseModel):
     status: str = "pending"
     priority: str = "medium"
     due_date: Optional[datetime] = None
+class TaskUpdate(BaseModel):
+    user_id: int
+    title: str
+    description: str
+    status: str
+    priority: str
+    due_date: Optional[datetime] = None

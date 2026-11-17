@@ -7,6 +7,8 @@ from typing import TaskResponse
 from typing import List
 from typing import UserResponse
 from app.schema.todo import TaskCreate
+from app.schema.todo import TaskUpdate
+
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -39,3 +41,6 @@ def get_user_by_email(email: str, db: Session = Depends(get_db)):
 @router.post("/", response_model=TaskResponse, status_code=status.HTTP_201_CREATED)
 def create_task(task: TaskCreate, db: Session = Depends(get_db)):
     return todo_service.create_task(db, task)
+@router.put("/{task_id}", response_model=TaskResponse)
+def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db)):
+    return todo_service.update_task(db, task_id, task)

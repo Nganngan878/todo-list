@@ -9,6 +9,8 @@ from datetime import datetime
 from sqlalchemy import func
 from app.models.todo import Task
 from app.schema.todo import TaskCreate
+from app.schema.todo import TaskUpdate
+from fastapi import HTTPException, status
 
 # 1. CREATE 
 #áp dụng chương5
@@ -41,6 +43,21 @@ def create_task(db: Session, task_data: TaskCreate):
         due_date=task_data.due_date
     )
     db.add(task)
+    db.commit()
+    db.refresh(task)
+    return task
+def update_task(db: Session, task_id: int, task_data: TaskUpdate):
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.user_id = task_data.user_id
+    task.title = task_data.title
+    task.description = task_data.description
+    task.status = task_data.status
+    task.priority = task_data.priority
+    task.due_date = task_data.due_date
+
     db.commit()
     db.refresh(task)
     return task
