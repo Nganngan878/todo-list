@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 from pydantic import ConfigDict
+from typing import Literal
 
 class TaskCreate(BaseModel):
     user_id: int
@@ -50,3 +51,7 @@ class TaskUpdate(BaseModel):
     status: str
     priority: str
     due_date: Optional[datetime] = None
+
+
+class TaskStatusUpdate(BaseModel):
+    status: Literal["pending", "in_progress", "completed", "cancelled"]

@@ -61,3 +61,16 @@ def update_task(db: Session, task_id: int, task_data: TaskUpdate):
     db.commit()
     db.refresh(task)
     return task
+def update_task_status(db: Session, task_id: int, new_status: str):
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    task.status = new_status
+
+    if new_status == "completed":
+        task.completed_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(task)
+    return task

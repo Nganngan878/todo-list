@@ -8,7 +8,7 @@ from typing import List
 from typing import UserResponse
 from app.schema.todo import TaskCreate
 from app.schema.todo import TaskUpdate
-
+from app.schema.todo import TaskStatusUpdate
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -44,3 +44,10 @@ def create_task(task: TaskCreate, db: Session = Depends(get_db)):
 @router.put("/{task_id}", response_model=TaskResponse)
 def update_task(task_id: int, task: TaskUpdate, db: Session = Depends(get_db)):
     return todo_service.update_task(db, task_id, task)
+@router.patch("/{task_id}/status", response_model=TaskResponse)
+def update_task_status(
+    task_id: int,
+    payload: TaskStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    return todo_service.update_task_status(db, task_id, payload.status)
