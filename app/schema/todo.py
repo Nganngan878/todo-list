@@ -5,36 +5,34 @@ from datetime import datetime
 from typing import Optional
 from pydantic import ConfigDict
 
-
-class TodoCreate(BaseModel):
-    name: str
+class TaskCreate(BaseModel):
+    user_id: int
+    category_id: Optional[int] = None
+    title: str
     description: Optional[str] = None
+    status: str = "pending"
     priority: str = "medium"
     due_date: Optional[datetime] = None
-    completed: bool = False
-class TodoReplace(TodoCreate):
-    name: str
-    description: Optional[str]
-    priority: str
-    due_date: Optional[datetime]
-    completed: bool
 
-
-class TodoUpdate(BaseModel):
-    name: Optional[str] = None
+class TaskUpdate(BaseModel):
+    title: Optional[str] = None
     description: Optional[str] = None
+    status: Optional[str] = None
     priority: Optional[str] = None
     due_date: Optional[datetime] = None
-    completed: Optional[bool] = None
+    category_id: Optional[int] = None
 
-#client
-#from_attributes=True: cho phép Pydantic đọc dữ liệu trực tiếp từ SQLAlchemy Model.
-class TodoResponse(BaseModel):
-    model_config=ConfigDict(from_attributes=True)
+class TaskResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
 
     id: int
-    name: str
-    description: Optional[str] = None
+    user_id: int
+    category_id: Optional[int]
+    title: str
+    description: Optional[str]
+    status: str
     priority: str
-    due_date: Optional[datetime] = None
-    completed: bool
+    due_date: Optional[datetime]
+    completed_at: Optional[datetime]
+    is_deleted: bool
+    created_at: datetime

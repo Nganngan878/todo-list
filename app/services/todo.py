@@ -1,11 +1,16 @@
 # Xử lý nghiệp vụ -> gọi xuống database
 # xử lý CRUD, LẤY , XEM , SỬA, XOÁ , CẬP NHẬT
 
+import datetime
+
 from sqlalchemy.orm import Session
 from app.models.todo import Todo
-
+from datetime import datetime
+from sqlalchemy import func
+from app.models.todo import Task
 
 # 1. CREATE 
+#áp dụng chương5
 def create(todo_data, db: Session):
     new_todo = Todo(**todo_data.model_dump())
     db.add(new_todo)
@@ -13,54 +18,16 @@ def create(todo_data, db: Session):
     db.refresh(new_todo)
     return new_todo
 
+def get_today_tasks(db: Session, user_id: int):
+    today = datetime.utcnow().date()
+    return (
+        db.query(Task)
+        .filter(
+            Task.user_id == user_id,
+            Task.is_deleted == False,
+            func.date(Task.due_date) == today
+        )
+        .order_by(Task.due_date.asc())
+        .all()
+    )
 
-# 2. READ 
-def get_all_todos(db: Session):
-    return db.query(Todo).all()
-
-
-# 3. READ 
-def get_todo_by_id(todo_id: int, db: Session):
-    return db.query(Todo).filter(Todo.id == todo_id).first()
-
-
-# 4. PUT 
-def replace(todo_id: int, todo_data, db: Session):
-    todo = get_todo_by_id(todo_id, db)
-    if todo is None:
-        return None
-
-    data = todo_data.model_dump()
-    for key, value in data.items():
-        setattr(todo, key, value)
-
-    db.commit()
-    db.refresh(todo)
-    return todo
-
-
-# 5. PATCH 
-def modify(todo_id: int, todo_data, db: Session):
-    todo = get_todo_by_id(todo_id, db)
-    if todo is None:
-        return None
-
-
-    data = todo_data.model_dump(exclude_unset=True)
-    for key, value in data.items():
-        setattr(todo, key, value)
-
-    db.commit()
-    db.refresh(todo)
-    return todo
-
-
-# 6. DELETE 
-def delete(todo_id: int, db: Session):
-    todo = get_todo_by_id(todo_id, db)
-    if todo is None:
-        return False
-
-    db.delete(todo)
-    db.commit()
-    return True
